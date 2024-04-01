@@ -6,13 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1">
     <title>Delivery Bot</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script> <!--Подключаем скрипт от телеграм-->
-    <link rel="stylesheet" type= "text/css" href="/ConstruktorHead/css/main.css">
-    <link rel="stylesheet" type= "text/css" href="/ConstruktorHead/js/main.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js" ></script>
+    <link rel="stylesheet" type= "text/css" href="/construktorHead/css/main.css">
 </head>
 <body>
-    <canvas id="canvas" width="400" height="400"></canvas>
-</body>
-<script>
+    <input type="radio" name="grp1" id="rCreate" checked>Click will create a new circle.<br>
+    <input type="radio" name="grp1" id="rSelect">Click will select an existing circle.<br>
+    <input type="radio" name="grp1" id="rMove">Click will move selected circle.<br>
+    <input type="radio" name="grp1" id="rDelete">Click will delete circle.<br>
+    <canvas id="canvas" width=600 height=600></canvas>
+    <table class="table_circ" id="table_data">
+      <thead>
+        <tr>
+          <th scope="col" class="center">Номер</th>
+          <th scope="col" class="center">Цвет</th>
+          <th scope="col" class="center">Радиус</th>
+          <th scope="col" class="center">Длина подписи</th>
+          <th scope="col" class="center">Текст</th>
+        </tr>
+      </thead>
+      <tbody id="data_circles">
 
-</script>
+      </tbody>
+    </table>
+</body>
+<script src="/construktorHead/js/main.js"></script>
 </html>

@@ -34,7 +34,7 @@ body {
   flex-direction: column;
   align-items: center;
 
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 .collapsible_menu,
 .collapsible {
@@ -50,13 +50,11 @@ body {
   font-size: 15px;
 }
 
-canvas {
-  display: block;
-  left: 50%;
-  margin: -200px 0 0 -200px;
-  position: absolute;
-  top: 50%;
-  z-index: -1000;
+#canvas{border:1px solid red;}
+
+table{
+  width:80%;
+  border: 1px solid black;
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */

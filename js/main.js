@@ -1,223 +1,139 @@
-/*=============================================================================*/
-/* Smooth Trail
-/*=============================================================================*/
-var smoothTrail = function(c, cw, ch) {
+// get references to the canvas and its context
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+var $canvas = $("#canvas");
 
-  /*=============================================================================*/
-  /* Initialize
-  /*=============================================================================*/
-  this.init = function() {
-    this.loop();
-  };
+// get the canvas position on the page
+// used to get mouse position
+var canvasOffset = $canvas.offset();
+var offsetX = canvasOffset.left;
+var offsetY = canvasOffset.top;
+var scrollX = $canvas.scrollLeft();
+var scrollY = $canvas.scrollTop();
+ctx.lineWidth = 2;
 
-  /*=============================================================================*/
-  /* Variables
-      /*=============================================================================*/
-  var _this = this;
-  this.c = c;
-  this.ctx = c.getContext('2d');
-  this.cw = cw;
-  this.ch = ch;
+// save info about each circle in an object
+var circles = [];
+var selectedCircle = -1;
 
-  //Cursor
-  this.x = this.cw / 2;
-  this.y = this.ch / 2;
+// the html radio buttons indicating what action to do upon mousedown
+var $create = $("#rCreate")[0];
+var $select = $("#rSelect")[0];
+var $move = $("#rMove")[0];
+var $delete = $("#rDelete")[0];
 
-  //trail
-  this.trail = [];
-  this.maxTrail = 200;
+ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  this.ctx.lineWidth = .1;
-  this.ctx.lineJoin = 'round';
+    ctx.setLineDash([0]);
+    ctx.beginPath();
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 1;
+    ctx.arc(canvas.width/2, canvas.height/2, canvas.width / 2.5, 0, 2*Math.PI);
+    ctx.stroke();
+    ctx.closePath();
 
-  this.radius = 1;
-  this.speed = 0.4;
-  this.angle = 0;
-  this.arcx = 0;
-  this.arcy = 0;
-  this.growRadius = true;
-  this.seconds = 0;
-  this.milliseconds = 0;
+    ctx.setLineDash([5]);
 
-  /*=============================================================================*/
-  /* Utility Functions
-      /*=============================================================================*/
-  this.rand = function(rMi, rMa) {
-    return ~~((Math.random() * (rMa - rMi + 1)) + rMi);
-  };
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/2-canvas.width/2.5, canvas.height/2);
+    ctx.lineTo(canvas.width/2+canvas.width/2.5, canvas.height/2);
 
-  /*=============================================================================*/
-  /* Utility Events
-      /*=============================================================================*/
-  c.addEventListener("mousemove", function(e) {
-    var r = _this.c.getBoundingClientRect();
-    _this.x = e.clientX - r.left;
-    _this.y = e.clientY - r.top;
+    ctx.moveTo(canvas.width/2, canvas.height/2-canvas.height/2.5);
+    ctx.lineTo(canvas.width/2, canvas.height/2+canvas.height/2.5);
+    ctx.stroke();
+    ctx.closePath();
+    ctx.setLineDash([0]);
 
-    //уменьшаем количество линий, чтобы анимацию не превращалась в кашу при перемещении мыши
-    _this.maxTrail = 10;
-    //Таймер - чтобы значение вернулось в норму не сразу, а после хотябы одного цикла анимации
-    setTimeout(function() {
-      _this.maxTrail = 200;
-    }, 1)
-  });
-  c.addEventListener("mouseleave", () => {
-    //Возвращаем анимацию в норму, если мышь ушла за canvas
-    _this.x = _this.cw / 2;
-    _this.y = _this.ch / 2;
-
-  });
+// draw all circles[]
+function drawAll() {
+    $("table tbody").empty();
 
 
-  /*=============================================================================*/
-  /* Create Point
-      /*=============================================================================*/
-  this.createPoint = function(x, y) {
-    this.trail.push({
-      x: x,
-      y: y
-    });
-  };
-
-  /*=============================================================================*/
-  /* Update Trail
-      /*=============================================================================*/
-  this.updateTrail = function() {
-
-    if (this.trail.length < this.maxTrail) {
-      this.createPoint(this.arcx, this.arcy);
+    for (var i = 0; i < circles.length; i++) {
+        var c = circles[i];
+        $("table tbody").append(
+          "<tr>" +
+          "<td>" + i + "</td>" +
+          "<td>" + "<input type=\"color\" id=\"picker\">" + "</td>" +
+          "<td>" + c.radius + "</td>" +
+          "<td>" + c.length_text + "</td>" +
+          "<td>" + c.text + "</td>" +
+          "</tr>"
+        )
+        ctx.beginPath();
+        ctx.arc(c.cx, c.cy, c.radius, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fillStyle = c.color;
+        ctx.fill();
+        // if this is the selected circle, highlight it
+        if (selectedCircle == i) {
+            ctx.strokeStyle = "red";
+            ctx.stroke();
+        }
     }
-
-    if (this.trail.length >= this.maxTrail) {
-      this.trail.splice(0, 1);
-    }
-  };
-
-  /*=============================================================================*/
-  /* Update Arc
-      /*=============================================================================*/
-  this.updateArc = function() {
-    this.arcx = (this.x) + Math.sin(this.angle) * this.radius;
-    this.arcy = (this.y) + Math.cos(this.angle) * this.radius;
-    var d = new Date();
-    this.seconds = d.getSeconds();
-    this.milliseconds = d.getMilliseconds();
-    this.angle += this.speed * (this.seconds + 1 + (this.milliseconds / 1000));
-
-    if (this.radius <= 1) {
-      this.growRadius = true;
-    }
-    if (this.radius >= 200) {
-      this.growRadius = false;
-    }
-
-    if (this.growRadius) {
-      this.radius += 1;
-    } else {
-      this.radius -= 1;
-    }
-  };
-
-  /*=============================================================================*/
-  /* Render Trail
-      /*=============================================================================*/
-  this.renderTrail = function() {
-    var i = this.trail.length;
-
-    this.ctx.beginPath();
-    while (i--) {
-      var point = this.trail[i];
-      var nextPoint = (i == this.trail.length) ? this.trail[i + 1] : this.trail[i];
-
-      var c = (point.x + nextPoint.x) / 2;
-      var d = (point.y + nextPoint.y) / 2;
-      this.ctx.quadraticCurveTo(Math.round(this.arcx), Math.round(this.arcy), c, d);
-
-
-    };
-    this.ctx.strokeStyle = 'hsla(' + this.rand(170, 300) + ', 100%, ' + this.rand(50, 75) + '%, 1)';
-    this.ctx.stroke();
-    this.ctx.closePath();
-
-  };
-
-
-  /*=============================================================================*/
-  /* Clear Canvas
-      /*=============================================================================*/
-  this.clearCanvas = function() {
-    this.ctx.globalCompositeOperation = 'destination-out';
-    this.ctx.fillStyle = 'rgba(0,0,0,.1)';
-    this.ctx.fillRect(0, 0, this.cw, this.ch);
-    this.ctx.globalCompositeOperation = 'lighter';
-  };
-
-  /*=============================================================================*/
-  /* Animation Loop
-      /*=============================================================================*/
-  this.loop = function() {
-    var loopIt = function() {
-      requestAnimationFrame(loopIt, _this.c);
-      _this.clearCanvas();
-      _this.updateArc();
-      _this.updateTrail();
-      _this.renderTrail();
-    };
-    loopIt();
-  };
-
-};
-
-/*=============================================================================*/
-/* Check Canvas Support
-/*=============================================================================*/
-var isCanvasSupported = function() {
-  var elem = document.createElement('canvas');
-  return !!(elem.getContext && elem.getContext('2d'));
-};
-
-/*=============================================================================*/
-/* Setup requestAnimationFrame
-/*=============================================================================*/
-var setupRAF = function() {
-  var lastTime = 0;
-  var vendors = ['ms', 'moz', 'webkit', 'o'];
-  for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-    window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
-  };
-
-  if (!window.requestAnimationFrame) {
-    window.requestAnimationFrame = function(callback, element) {
-      var currTime = new Date().getTime();
-      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-      var id = window.setTimeout(function() {
-        callback(currTime + timeToCall);
-      }, timeToCall);
-      lastTime = currTime + timeToCall;
-      return id;
-    };
-  };
-
-  if (!window.cancelAnimationFrame) {
-    window.cancelAnimationFrame = function(id) {
-      clearTimeout(id);
-    };
-  };
-};
-
-/*=============================================================================*/
-/* Define Canvas and Initialize
-/*=============================================================================*/
-if (isCanvasSupported) {
-  var c = document.createElement('canvas');
-  c.width = 400;
-  c.height = 400;
-  var cw = c.width;
-  var ch = c.height;
-  document.body.appendChild(c);
-  var cl = new smoothTrail(c, cw, ch);
-
-  setupRAF();
-  cl.init();
 }
+
+function handleMouseDown(e) {
+    e.preventDefault();
+    mouseX = parseInt(e.clientX - offsetX);
+    mouseY = parseInt(e.clientY - offsetY);
+
+    if ($create.checked) {
+        // create a new circle a the mouse position and select it
+        circles.push({
+            cx: mouseX,
+            cy: mouseY,
+            radius: 10,
+            color: randomColor(),
+            length_text: 10,
+            text: 'sign'
+        });
+        selectedCircle = circles.length - 1;
+    }
+    if ($select.checked) {
+        // unselect any selected circle
+        selectedCircle = -1;
+        // iterate circles[] and select a circle under the mouse
+        for (var i = 0; i < circles.length; i++) {
+            var c = circles[i];
+            var dx = mouseX - c.cx;
+            var dy = mouseY - c.cy;
+            var rr = c.radius * c.radius;
+            if (dx * dx + dy * dy < rr) {
+                selectedCircle = i;
+            }
+        }
+    }
+    if ($move.checked && selectedCircle >= 0) {
+        // move the selected circle to the mouse position
+        var c = circles[selectedCircle];
+        c.cx = mouseX;
+        c.cy = mouseY;
+    }
+    if ($delete.checked && selectedCircle >= 0) {
+        // unselect any selected circle
+        circles.pop(selectedCircle);
+        selectedCircle = -1
+    }
+
+    // redraw all circles
+    drawAll();
+}
+
+// return a random color
+function randomColor() {
+    return ('#' + Math.floor(Math.random() * 16777215).toString(16));
+}
+
+// handle mousedown events
+$("#canvas").mousedown(function (e) {
+    handleMouseDown(e);
+});
+
+// $("#canvas").mousemove(function (e) {
+//     handleMouseDown(e);
+// });
+//
+// $("#canvas").mouseup(function (e) {
+//     handleMouseDown(e);
+// });
