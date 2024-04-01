@@ -7,20 +7,10 @@
     <title>Delivery Bot</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script> <!--Подключаем скрипт от телеграм-->
     <link rel="stylesheet" type= "text/css" href="/ConstruktorHead/css/main.css">
+    <link rel="stylesheet" type= "text/css" href="/ConstruktorHead/js/main.css">
 </head>
 <body>
-    <button type="button" class="collapsible"><b>Меню</b></button>
-    <div class="content_menu">
-      <div class="div-menu-button"><a class="menu_button" type="button" href='/delivery_bot/user/'><b>Задания</b></a></div>
-      <div class="div-menu-button"><a class="menu_button" href='/delivery_bot/user/info'>Информация</a></div>
-    </div>
-    <div id="main" class="div-buttons">
-
-    </div>
-    <p class="hint">
-      ⚠️ - Ожидает подтверждения<br>
-      🟢 - Не выполнено<br>
-    </p>
+    <canvas id="canvas" width="400" height="400"></canvas>
 </body>
 <script>
 
