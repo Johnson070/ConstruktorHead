@@ -23,28 +23,48 @@ var $delete = $("#rDelete")[0];
 
 var mouse_down = false;
 
+function get_mouseXY(e) {
+    if (e.touches == null) {
+      mouseX = parseInt(e.clientX - offsetX);
+      mouseY = parseInt(e.clientY - offsetY);
+      return [mouseX, mouseY]
+    }
+    else {
+      mouseX = parseInt(e.touches[0].clientX - offsetX);
+      mouseY = parseInt(e.touches[0].clientY - offsetY);
+      return [mouseX, mouseY]
+    }
+}
+
 function start_canvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.rect(20, 20, 150, 100);
+  ctx.fillStyle = "white";
+  ctx.fill();
+  ctx.fillStyle = "black";
 
-    ctx.setLineDash([0]);
-    ctx.beginPath();
-    ctx.strokeStyle = "#000000";
-    ctx.lineWidth = 1;
-    ctx.arc(canvas.width/2, canvas.height/2, canvas.width / 2.5, 0, 2*Math.PI);
-    ctx.stroke();
-    ctx.closePath();
+  ctx.setLineDash([0]);
+  ctx.beginPath();
+  ctx.strokeStyle = "#000000";
+  ctx.lineWidth = 1;
+  ctx.arc(canvas.width/2, canvas.height/2, canvas.width / 2.5, 0, 2*Math.PI);
+  ctx.font = "16px Arial";
+  ctx.fillText("UP", canvas.width / 2 - ctx.measureText('UP').width / 2, canvas.height / 2 - canvas.width / 2.5 - 5);
+  ctx.fillText("R", canvas.width / 2 - canvas.width / 2.5 - ctx.measureText('R').width / 2 - 10, canvas.height / 2 + 5);
+  ctx.stroke();
+  ctx.closePath();
 
-    ctx.setLineDash([5]);
+  ctx.setLineDash([5]);
 
-    ctx.beginPath();
-    ctx.moveTo(canvas.width/2-canvas.width/2.5, canvas.height/2);
-    ctx.lineTo(canvas.width/2+canvas.width/2.5, canvas.height/2);
+  ctx.beginPath();
+  ctx.moveTo(canvas.width/2-canvas.width/2.5, canvas.height/2);
+  ctx.lineTo(canvas.width/2+canvas.width/2.5, canvas.height/2);
 
-    ctx.moveTo(canvas.width/2, canvas.height/2-canvas.height/2.5);
-    ctx.lineTo(canvas.width/2, canvas.height/2+canvas.height/2.5);
-    ctx.stroke();
-    ctx.closePath();
-    ctx.setLineDash([0]);
+  ctx.moveTo(canvas.width/2, canvas.height/2-canvas.height/2.5);
+  ctx.lineTo(canvas.width/2, canvas.height/2+canvas.height/2.5);
+  ctx.stroke();
+  ctx.closePath();
+  ctx.setLineDash([0]);
 }
 start_canvas();
 function drawAll() {
@@ -77,6 +97,8 @@ function drawAll() {
             ctx.strokeStyle = "red";
             ctx.stroke();
         }
+
+
         draw_sign(c.cx, c.cy, c.length_text, c.text);
     }
 }
@@ -96,18 +118,17 @@ function draw_sign(cx, cy, line_length, text) {
     ctx.stroke();
     ctx.setLineDash([0]);
     ctx.font = "16px Arial";
-    ctx.fillText(text, line_x+5-(cx >= canvas.width / 2 ? 0 : 12*text.length), line_y-3);
+    ctx.fillText(text, line_x+5-(cx >= canvas.width / 2 ? 0 : ctx.measureText(text).width + 10), line_y-3);
 }
 
 function handleMouseDown(e) {
     e.preventDefault();
-    mouseX = parseInt(e.clientX - offsetX);
-    mouseY = parseInt(e.clientY - offsetY);
+    var mouseXY = get_mouseXY(e);
     if ($create.checked) {
         // create a new circle a the mouse position and select it
         circles.push({
-            cx: mouseX,
-            cy: mouseY + scrollY_M,
+            cx: mouseXY[0],
+            cy: mouseXY[1] + scrollY_M,
             radius: 10,
             color: '#000000',
             length_text: 50,
@@ -121,15 +142,15 @@ function handleMouseDown(e) {
         // iterate circles[] and select a circle under the mouse
         for (var i = 0; i < circles.length; i++) {
             var c = circles[i];
-            var dx = mouseX - c.cx;
-            var dy = mouseY - c.cy;
+            var dx = mouseXY[0] - c.cx;
+            var dy = mouseXY[1] - c.cy;
             var rr = c.radius * c.radius;
             if (dx * dx + dy * dy < rr) {
                 selectedCircle = i;
             }
         }
     }
-    if ($delete.checked && selectedCircle >= 0) {
+    if ($delete.checked) {
         select_circle(e);
         circles.splice(selectedCircle,1);
         selectedCircle = -1
@@ -140,32 +161,29 @@ function handleMouseDown(e) {
 }
 
 function select_circle(e) {
-  if (selectedCircle == -1) {
-      // iterate circles[] and select a circle under the mouse
-      for (var i = 0; i < circles.length; i++) {
-          var c = circles[i];
-          var dx = mouseX - c.cx;
-          var dy = mouseY - c.cy;
-          var rr = c.radius * c.radius;
-          if (dx * dx + dy * dy < rr) {
-              selectedCircle = i;
-          }
-      }
+  var mouseXY = get_mouseXY(e);
+  for (var i = 0; i < circles.length; i++) {
+    var c = circles[i];
+    var dx = mouseXY[0] - c.cx;
+    var dy = mouseXY[1] - c.cy;
+    var rr = c.radius * c.radius;
+    if (dx * dx + dy * dy < rr) {
+        selectedCircle = i;
     }
+  }
 }
 
 function handleMoveCircle(e) {
   if (mouse_down) {
     e.preventDefault();
-    mouseX = parseInt(e.clientX - offsetX);
-    mouseY = parseInt(e.clientY - offsetY);
+    var mouseXY = get_mouseXY(e);
     select_circle(e);
 
     if (selectedCircle >= 0) {
       // move the selected circle to the mouse position
       var c = circles[selectedCircle];
-      c.cx = mouseX;
-      c.cy = mouseY;
+      c.cx = mouseXY[0];
+      c.cy = mouseXY[1];
     }
 
     drawAll();
@@ -177,7 +195,7 @@ window.addEventListener('scroll', function() {
 });
 
 function save_table(){
-    var cells = $("tr td")
+    var cells = $("tr td");
 
     for (var i = 0; i < cells.length; i+=5) {
       var index = Math.floor(i / 5)
@@ -192,15 +210,30 @@ function save_table(){
 
 // handle mousedown events
 $("#canvas").mousedown(function (e) {
-    handleMouseDown(e);
-    mouse_down = true;
+  if (e.touches != null) return;
+  handleMouseDown(e);
+  mouse_down = true;
 });
 
 $("#canvas").mousemove(function (e) {
-    handleMoveCircle(e);
+  if (e.touches != null) return;
+  handleMoveCircle(e);
 });
 
 $("#canvas").mouseup(function (e) {
-    mouse_down = false;
+  if (e.touches != null) return;
+  mouse_down = false;
 });
 
+var el_canvas = document.getElementById("canvas");
+
+el_canvas.addEventListener("touchstart", (e) => {
+  handleMouseDown(e);
+  mouse_down = true;
+}); // el.ontouchstart = () => { console.log('start') };
+el_canvas.addEventListener('touchend', (e) => {
+  mouse_down = false;
+}); // el.ontouchstart = () => { console.log('start') };
+el_canvas.addEventListener('touchmove', (e) => {
+  handleMoveCircle(e);
+}); // el.ontouchstart = () => { console.log('start') };
