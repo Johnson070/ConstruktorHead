@@ -1,3 +1,5 @@
+<!--TODO: добавить кнопку очистить-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,13 +9,19 @@
     <title>Delivery Bot</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script> <!--Подключаем скрипт от телеграм-->
     <script src="https://code.jquery.com/jquery-3.7.1.slim.js" ></script>
-    <link rel="stylesheet" type= "text/css" href="/ConstruktorHead/css/main.css">
+    <link rel="stylesheet" type= "text/css" href="/css/main.css">
 </head>
-<body>
-    <input type="radio" name="grp1" id="rCreate" checked>Добавить<br>
-    <input type="radio" name="grp1" id="rSelect">Перемещение<br>
-    <input type="radio" name="grp1" id="rDelete">Удалить<br>
-    <canvas id="canvas" width=400 height=400></canvas>
+<body onload="load();">
+    <div>
+      <input type="radio" name="radios" id="rCreate" checked>
+        <label for="rCreate">Добавить</label>
+        <input type="radio" name="radios" id="rSelect">
+        <label for="rSelect">Перемещение</label>
+        <input type="radio" name="radios" id="rDelete">
+        <label for="rDelete">Удалить</label>
+    </div>
+    <br>
+    <canvas id="canvas" width="400" height="400"></canvas>
     <table class="table_circ" id="table_data">
       <thead>
         <tr>
@@ -29,8 +37,29 @@
       </tbody>
     </table>
 </body>
+
 <script>
+  function load() {
+
+    var WebApp = window.Telegram.WebApp;
+    var MainButton = WebApp.MainButton;
+    MainButton.text = 'Сохранить';
+    MainButton.show();
+    WebApp.expand();
+    WebApp.enableClosingConfirmation();
+    const urlParams = new URLSearchParams(window.location.search);
+    const scheme_id = urlParams.get('scheme');
+
+    MainButton.onClick(function() {
+      WebApp.sendData(JSON.stringify({
+        json: circles,
+        scheme: scheme_id
+      }));
+      WebApp.close();
+    });
+  }
+
 
 </script>
-<script src="/ConstruktorHead/js/main.js"></script>
+<script src="/js/main.js" defer></script>
 </html>

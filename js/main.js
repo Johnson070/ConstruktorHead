@@ -1,4 +1,8 @@
-// get references to the canvas and its context
+// var $canvasDiv = $('#canvas');
+//   var canvas = document.getElementById("canvas");
+//   canvas.height = window.innerWidth * 0.95;
+//   canvas.width = window.innerWidth * 0.95;
+
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 var $canvas = $("#canvas");
@@ -12,7 +16,7 @@ var scrollX = $canvas.scrollLeft();
 var scrollY_M = $canvas.scrollTop();
 
 // save info about each circle in an object
-var circles = [];
+var circles = JSON.parse('[{"cx": 143, "cy": 121, "radius": "38", "color": "#000000", "length_text": "50", "text": "Signal Wire"}, {"cx": 233, "cy": 150, "radius": "36", "color": "#000000", "length_text": "75", "text": "LCB"}, {"cx": 144, "cy": 212, "radius": "36", "color": "#000000", "length_text": "115", "text": "LCB"}, {"cx": 302, "cy": 151, "radius": "24", "color": "#000000", "length_text": "50", "text": "AirTube"}, {"cx": 134, "cy": 287, "radius": "24", "color": "#000000", "length_text": "50", "text": "WaterTube"}, {"cx": 248, "cy": 262, "radius": "60", "color": "#000000", "length_text": "85", "text": "Op Channel"}]');
 var selectedCircle = -1;
 
 // the html radio buttons indicating what action to do upon mousedown
@@ -37,8 +41,9 @@ function get_mouseXY(e) {
 }
 
 function start_canvas() {
+  var del_R = 2.8
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.rect(20, 20, 150, 100);
+  ctx.rect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "white";
   ctx.fill();
   ctx.fillStyle = "black";
@@ -47,26 +52,27 @@ function start_canvas() {
   ctx.beginPath();
   ctx.strokeStyle = "#000000";
   ctx.lineWidth = 1;
-  ctx.arc(canvas.width/2, canvas.height/2, canvas.width / 2.5, 0, 2*Math.PI);
-  ctx.font = "16px Arial";
-  ctx.fillText("UP", canvas.width / 2 - ctx.measureText('UP').width / 2, canvas.height / 2 - canvas.width / 2.5 - 5);
-  ctx.fillText("R", canvas.width / 2 - canvas.width / 2.5 - ctx.measureText('R').width / 2 - 10, canvas.height / 2 + 5);
+  ctx.arc(canvas.width/2, canvas.height/2, canvas.width / del_R, 0, 2*Math.PI);
+  ctx.font = "16px Sans Serif";
+  ctx.fillText("UP", canvas.width / 2 - ctx.measureText('UP').width / 2, canvas.height / 2 - canvas.width / del_R - 5);
+  ctx.fillText("R", canvas.width / 2 - canvas.width / del_R - ctx.measureText('R').width / 2 - 10, canvas.height / 2 + 5);
   ctx.stroke();
   ctx.closePath();
 
-  ctx.setLineDash([5]);
+
 
   ctx.beginPath();
-  ctx.moveTo(canvas.width/2-canvas.width/2.5, canvas.height/2);
-  ctx.lineTo(canvas.width/2+canvas.width/2.5, canvas.height/2);
+  ctx.setLineDash([5, 10, 5]);
+  ctx.moveTo(canvas.width/2-canvas.width/del_R, canvas.height/2);
+  ctx.lineTo(canvas.width/2+canvas.width/del_R, canvas.height/2);
 
-  ctx.moveTo(canvas.width/2, canvas.height/2-canvas.height/2.5);
-  ctx.lineTo(canvas.width/2, canvas.height/2+canvas.height/2.5);
+  ctx.moveTo(canvas.width/2, canvas.height/2-canvas.height/del_R);
+  ctx.lineTo(canvas.width/2, canvas.height/2+canvas.height/del_R);
   ctx.stroke();
+  ctx.setLineDash([]);
   ctx.closePath();
-  ctx.setLineDash([0]);
 }
-start_canvas();
+drawAll();
 function drawAll() {
     start_canvas();
 
@@ -80,12 +86,13 @@ function drawAll() {
           "<tr class='row_table'>" +
           "<td>" + i + "</td>" +
           "<td>" + "<input onchange='save_table();' class='data_table' type=\"color\" size='4' value='" + c.color + "'>" + "</td>" +
-          "<td>" + "<input onchange='save_table();' class='data_table' type='number' value='" + c.radius + "'>" + "</td>" +
-          "<td>" + "<input onchange='save_table();' class='data_table' type='number' value='" + c.length_text + "'>" + "</td>" +
+          "<td>" + "<input onchange='save_table();' class='data_table' type='range' min=\"10\" max=\"100\" step=\"2\"value='" + c.radius + "'>" + "</td>" +
+          "<td>" + "<input onchange='save_table();' class='data_table' type='range' min=\"50\" max=\"150\" step=\"5\"value='" + c.length_text + "'>" + "</td>" +
           "<td>" + "<input onchange='save_table();' class='data_table' type='text' value='" + c.text + "'>" + "</td>" +
           "</tr>"
         )
         ctx.beginPath();
+        ctx.setLineDash([]);
         ctx.arc(c.cx, c.cy, c.radius, 0, Math.PI * 2);
 
 
@@ -111,12 +118,22 @@ function draw_sign(cx, cy, line_length, text) {
     line_x = cx+Math.sin(3.14159265358979 / 4 * (cx >= canvas.width / 2 ? 1 : -1))*line_length
     line_y = cy+Math.cos(3.14159265358979 / (cy >= canvas.height / 2 ? 4 : 1))*line_length
 
-    ctx.setLineDash([2]);
+    ctx.beginPath();
+    ctx.strokeStyle = '#000000';
+    ctx.setLineDash([2,5]);
     ctx.moveTo(cx, cy);
     ctx.lineTo(line_x, line_y);
-    ctx.lineTo(line_x+(50 * (cx >= canvas.width / 2 ? 1 : -1)), line_y);
+    ctx.closePath();
     ctx.stroke();
-    ctx.setLineDash([0]);
+
+    ctx.beginPath();
+    ctx.setLineDash([2,5]);
+    ctx.moveTo(line_x, line_y);
+    ctx.lineTo(line_x+(50 * (cx >= canvas.width / 2 ? 1 : -1)), line_y);
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.setLineDash([]);
     ctx.font = "16px Arial";
     ctx.fillText(text, line_x+5-(cx >= canvas.width / 2 ? 0 : ctx.measureText(text).width + 10), line_y-3);
 }

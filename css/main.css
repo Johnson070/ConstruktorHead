@@ -50,44 +50,69 @@ body {
   font-size: 15px;
 }
 
-#canvas{border:1px solid red;}
+#canvas{
+  border:1px dotted red;
+  /*width: 95%;*/
+  /*height: 95vw;*/
+}
+
+input[type=radio], input[type=checkbox] {
+		display:none;
+	}
+
+input[type=radio] + label, input[type=checkbox] + label {
+		display:inline-block;
+		margin:-2px;
+		padding: 4px 12px;
+		margin-bottom: 0;
+		font-size: 14px;
+		line-height: 20px;
+		color: #333;
+		text-align: center;
+		text-shadow: 0 1px 1px rgba(255,255,255,0.75);
+		vertical-align: middle;
+		cursor: pointer;
+		background-color: #f5f5f5;
+		background-image: -moz-linear-gradient(top,#fff,#e6e6e6);
+		background-image: -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#e6e6e6));
+		background-image: -webkit-linear-gradient(top,#fff,#e6e6e6);
+		background-image: -o-linear-gradient(top,#fff,#e6e6e6);
+		background-image: linear-gradient(to bottom,#fff,#e6e6e6);
+		background-repeat: repeat-x;
+		border: 1px solid #ccc;
+		border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+		border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+		border-bottom-color: #b3b3b3;
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#ffe6e6e6',GradientType=0);
+		filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+		-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+		-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+		box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+	}
+
+	 input[type=radio]:checked + label, input[type=checkbox]:checked + label{
+		   background-image: none;
+		outline: 0;
+		-webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
+		-moz-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
+		box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
+			background-color:#e0e0e0;
+	}
 
 .data_table {
-  width: 50px;
+  width: 90%;
 }
+
 
 .row_table {
   align-items: center;
 }
 
 table{
-  width:80%;
-  border: 1px solid black;
+  width:95%;
+  border: 2px solid black;
 }
 
-/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-.active, .collapsible:hover {
-  background-color: #ccc;
-}
-
-/* Style the collapsible content. Note: hidden by default */
-.content_menu {
-/*         padding: 18px 0px; */
-  display: none;
-  width: 100%;
-  margin: 0px 18px;
-  overflow: hidden;
-  background-color: var(--tg-theme-secondary-bg-color);
-
-  text-align: center;
-}
-
-.link_user:visited,
-.link_user:not(:visited),
-.link_user {
-  color: var(--tg-theme-link-color);
-  text-decoration: underline;
-}
 
 .hint{
    color: var(--tg-theme-hint-color);
@@ -106,319 +131,10 @@ a:visited {
   text-decoration: none;
 }
 
-.button{
-  display: inline-block;
-  border: 5px solid var(--tg-theme-button-color);
-  border-radius: 10px;
-  background: var(--tg-theme-button-color);
-  text-decoration: none;
-  color: var(--tg-theme-button-text-color);
-  size: 18px;
-  width: 98%;
-
-  margin: 5px 0px 0;
-}
-
-.button:hover {
-  background-color: #ccc;
-  border-color: #ccc;
-}
-
-.delete-button {
-  background-color: #e74c3c;
-  border-color: #e74c3c;
-}
-
-.ext-button {
-  background-color: #f1c40f;
-  border-color: #f1c40f;
-}
-
-/*.button:not(:last-child) {*/
-/*   margin-bottom: 5px*/
-/*}*/
-
-.div-buttons {
-  text-align: center;
-
-  max-width: 80%;
-  color: var(--tg-theme-text-color);
-
-  left: 50%;
-  top: 50%;
-  /*transform: translate(-50%, -50%)*/
-}
-
-#usercard{
-  text-align: center;
-  width: 95%;
-  color: var(--tg-theme-text-color);
-}
-
-.text-info-user {
-  color: var(--tg-theme-text-color);
-  background-color: var(--tg-theme-secondary-bg-color);
-  width: 90%;
-  border-radius: 1em;
-  margin: 10px 0;
-}
-
-.text-info-container{
-  display: flex;
-  position: relative;
-  padding: 5px 10px;
-  font-size: 14px;
-}
-
-div.name-property {
-  display: inline-block;
-  float: left;
-  width: 100%;
-  margin-right: -100%;
-  text-align: left;
-}
-
-div.value-property {
-  display: inline-block;
-  float: right;
-  width: 100%;
-  margin-right: -100%;
-  text-align: right;
-}
-
-
-
-/* Style the collapsible content. Note: hidden by default */
-.content_menu {
-  padding: 5px 0px;
-  display: none;
-  width: 100%;
-  margin: 0px 18px;
-  overflow: hidden;
-  background-color: var(--tg-theme-secondary-bg-color);
-  color: var(--tg-theme-text-color);
-}
-
-.menu_button {
-  text-decoration: none;
-  width: auto;
-  color: var(--tg-theme-text-color);
-}
-
-.div-menu-button {
-    margin: 10px 10px;
-    width: auto;
-    display: inline-block;
-}
-
-.grid-item-btn-proof{
-  grid-area: proof;
-}
-
-.grid-item-btn-download{
-  grid-area: download;
-}
-
-.grid-item-btn-retry{
-  grid-area: retry;
-}
-
-.grid-item-btn-reject{
-  grid-area: reject;
-}
-
-.grid-item-btn-reject{
-  grid-area: reject;
-}
-
-.buttons-grid-wait {
-  width: 100%;
-  display: grid;
-  grid-template-rows: auto;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: "proof proof"
-                       "download retry"
-                       "reject reject";
-}
-
-.buttons-grid-done {
-  width: 100%;
-  display: grid;
-  grid-template-rows: auto;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: "download download"
-                       "reject reject";
-}
-
-.buttons-grid-rejected {
-  width: 100%;
-  display: inline-grid;
-  grid-template-rows: auto;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: "proof proof"
-                       "download retry";
-}
-
-.button-add-user-mission {
-  grid-area: add;
-}
-
-.button-delete-user-mission {
-  grid-area: delete;
-}
-
-.button-change-user-mission {
-  grid-area: change;
-}
-
-.button-kick-user-mission {
-  grid-area: kick;
-}
-
-.button-write-user-mission {
-  grid-area: write;
-}
-
-.buttons-grid-user {
-  width: 100%;
-  display: inline-grid;
-  grid-template-rows: auto;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: "add delete"
-                       "change change"
-                       "write write"
-                       "kick kick";
-}
-
-#reports {
-  display: inline-block;
-  width: 98%;
-  text-align: center;
-}
-
-#reports .button {
-  margin: 5px 5px;
-  width: auto;
-}
-
-.report-grid-photo {
-  object-fit: cover;
-  width: 33.3%;
-  max-height: 100%;
-}
-
-.report-grid {
-  display: none;
-  /*background-color: var(--tg-theme-secondary-bg-color);*/
-  grid-template-rows: auto;
-  grid-template-columns: 1fr;
-  /*grid-template-areas: ". . .";*/
-}
-
-.map {
-  height: 500px;
-}
-
-.route-name {
-  border: var(--tg-theme-button-color) 2px;
-  border-style: dotted;
-  border-radius: 10px;
-}
-
-#routes-btns {
-  text-align: center;
-  width: 80%;
-  margin: 1em 0 auto;
-}
-
 hr {
   color: var(--tg-theme-secondary-bg-color);
   width: 95%;
   margin-bottom: 20px;
-}
-
-.popup-block {
-  z-index: 99999999;
-  border: var(--block-bg-color) solid;
-  background-color: var(--block-bg-color);
-  width: 90%;
-  height: auto;
-  max-height: 95%;
-  overflow-y: auto;
-  text-align: -webkit-center;
-  border-radius: 1.5em;
-  position: absolute;
-  color: var(--tg-theme-text-color);
-
-  left: 50%;
-  top: 50%;
-  -ms-transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
-}
-
-.change-slide {
-  animation-duration: 0.8s;
-  animation-name: slide_change;
-  -webkit-animation-name: slide_change;
-  -webkit-animation-duration: 0.8s;
-  -webkit-backface-visibility: hidden;
-}
-
-.popup-blur {
-  z-index: 9999;
-  position: fixed;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
-  width: 100%;
-  height: 100vh;
-  display: none;
-}
-
-.close-popup {
-  z-index: 9999999999999;
-  font-size: 20px;
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  left:0;
-  right:0;
-
-  margin-left: 90%;
-  margin: 90%;
-  margin-top: 10px;
-
-  border: var(--tg-theme-button-color, #FFFFFF) solid;
-  border-radius: 1em;
-  background-color: var(--tg-theme-button-color);
-}
-
-.popup-status-bar {
-  width: 100%;
-
-}
-
-.navigation {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.navigation p {
-  margin: auto 10px;
-}
-
-.navigation .button {
-  width: auto;
-}
-
-.popup-status-bar #close {
-  display: flex;
-  width: auto;
-  position: absolute;
-  right: 0;
-  top: 0;
-  margin-right: 15px;
 }
 
 @keyframes slide_change {
